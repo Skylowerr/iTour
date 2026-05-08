@@ -12,15 +12,17 @@ struct ContentView: View {
     @Environment(\.modelContext) var modelContext
     @State var path : [Destination]
     @State var sortOrder = SortDescriptor(\Destination.name)
+    @State var searchText = ""
     
     var body: some View {
         NavigationStack(path: $path){
-            DestinationListingView(sort: sortOrder)
+            DestinationListingView(sort: sortOrder, searchString: searchText)
             .navigationTitle("iTour")
             .navigationDestination(for: Destination.self) { destination in
                 EditDestinationView(destination: destination)
-            }            .toolbar{
-                Button("Add Samples", action: addSamples)
+            }
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
+            .toolbar{
                 Button("Add Destination", systemImage: "plus", action: addDestination)
                 
                 Menu("Sort", systemImage: "arrow.up.arrow.down"){
@@ -40,16 +42,16 @@ struct ContentView: View {
         }
     }
     
-    func addSamples(){
-        let rome = Destination(name: "Rome")
-        let venice = Destination(name: "Venice")
-        let florence = Destination(name: "Florence")
-        
-        modelContext.insert(rome)
-        modelContext.insert(venice)
-        modelContext.insert(florence)
-        try! modelContext.save()
-    }
+//    func addSamples(){
+//        let rome = Destination(name: "Rome")
+//        let venice = Destination(name: "Venice")
+//        let florence = Destination(name: "Florence")
+//        
+//        modelContext.insert(rome)
+//        modelContext.insert(venice)
+//        modelContext.insert(florence)
+//        try! modelContext.save()
+//    }
     
     func addDestination(){
         let destination = Destination()
