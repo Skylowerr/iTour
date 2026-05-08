@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct EditDestinationView: View {
+    @Environment(\.modelContext) var modelContext
     @Bindable var destination : Destination
     var body: some View {
         Form{
@@ -28,6 +29,8 @@ struct EditDestinationView: View {
         .navigationTitle("Edit Destination")
         .navigationBarTitleDisplayMode(.inline)
     }
+    
+
 }
 
 #Preview {
