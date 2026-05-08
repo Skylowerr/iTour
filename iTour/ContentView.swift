@@ -10,42 +10,48 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) var modelContext
-    @Query var destinations : [Destination]
     @State var path : [Destination]
+    @State var sortOrder = SortDescriptor(\Destination.name)
+    @State var searchText = ""
     
     var body: some View {
         NavigationStack(path: $path){
-            List{
-                ForEach(destinations){destination in
-                    NavigationLink(value: destination){
-                        
-                        Text(destination.name)
-                            .font(.headline)
-                        
-                        Text(destination.date.formatted(date: .long, time: .shortened))
-                    }
-                }
-                .onDelete(perform: deleteDestination)
-            }
+            DestinationListingView(sort: sortOrder, searchString: searchText)
             .navigationTitle("iTour")
-            .navigationDestination(for: Destination.self, destination: EditDestinationView.init)
+            .navigationDestination(for: Destination.self) { destination in
+                EditDestinationView(destination: destination)
+            }
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
             .toolbar{
-                Button("Add Samples", action: addSamples)
                 Button("Add Destination", systemImage: "plus", action: addDestination)
+                
+                Menu("Sort", systemImage: "arrow.up.arrow.down"){
+                    Picker("Sort", selection: $sortOrder){
+                        Text("Name")
+                            .tag(SortDescriptor(\Destination.name))
+                        
+                        Text("Priority")
+                            .tag(SortDescriptor(\Destination.priority, order: .reverse))
+                        
+                        Text("Date")
+                            .tag(SortDescriptor(\Destination.date))
+                    }
+                    .pickerStyle(.inline)
+                }
             }
         }
     }
     
-    func addSamples(){
-        let rome = Destination(name: "Rome")
-        let venice = Destination(name: "Venice")
-        let florence = Destination(name: "Florence")
-        
-        modelContext.insert(rome)
-        modelContext.insert(venice)
-        modelContext.insert(florence)
-        try! modelContext.save()
-    }
+//    func addSamples(){
+//        let rome = Destination(name: "Rome")
+//        let venice = Destination(name: "Venice")
+//        let florence = Destination(name: "Florence")
+//        
+//        modelContext.insert(rome)
+//        modelContext.insert(venice)
+//        modelContext.insert(florence)
+//        try! modelContext.save()
+//    }
     
     func addDestination(){
         let destination = Destination()
@@ -53,12 +59,7 @@ struct ContentView: View {
         path = [destination] //TODO: ANLAT
     }
     
-    func deleteDestination(_ indexSet : IndexSet){
-        for index in indexSet{
-            let destination = destinations[index]
-            modelContext.delete(destination)
-        }
-    }
+
 }
 
 
