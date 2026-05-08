@@ -29,10 +29,21 @@ struct DestinationListingView: View {
         }
     }
     
-    //TODO: Burayı açıkla. özellikle neden _
-    init(sort: SortDescriptor<Destination>){
-        _destinations = Query(sort: [sort])
+    //MARK: Dışarıdan girilen kelimeyi alıp filtreleyerek[include or exclude] gösteriyor.
+    
+    init(sort: SortDescriptor<Destination>, searchString : String){
+        _destinations = Query(filter: #Predicate{
+        if searchString.isEmpty{
+            return true  // Arama kutusu boşsa her şeyi göster
+        }else{
+            return $0.name.localizedStandardContains(searchString) //Filtrele
+        }
+        },sort: [sort])
     }
+    /*
+     .contains() = Büyük küçük harfe duyarlı, rome-> Rome bulmaz
+     localizedStandardContains() = Case insensitive, Türkçe karakterler sıkıntısız çalışır,
+     */
     
     func deleteDestination(_ indexSet : IndexSet){
         for index in indexSet{
@@ -43,5 +54,5 @@ struct DestinationListingView: View {
 }
 
 #Preview {
-    DestinationListingView(sort: SortDescriptor(\Destination.name))
+    DestinationListingView(sort: SortDescriptor(\Destination.name), searchString: "")
 }
