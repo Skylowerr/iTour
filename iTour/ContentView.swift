@@ -50,13 +50,13 @@ struct ContentView: View {
 //        modelContext.insert(rome)
 //        modelContext.insert(venice)
 //        modelContext.insert(florence)
-//        try! modelContext.save()
+//        try! modelContext.save() //Bunu yazmayınca kaydetmiyor
 //    }
     
     func addDestination(){
         let destination = Destination()
         modelContext.insert(destination)
-        path = [destination] //TODO: ANLAT
+        path = [destination]
     }
     
 
